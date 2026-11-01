@@ -1,6 +1,5 @@
 #include "ml_engine.h"
 
-
 void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt8* output) {
     uint16_t out_nodes = layer->weights.rows;
     uint16_t in_nodes = layer->weights.cols;
@@ -28,6 +27,7 @@ void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* outp
     switch(layer->type) {
         case LAYER_LINEAR:
             linear_forward(input, (const LinearLayer*)layer->params, output);
+            break;
 
         default:
             while(1);
