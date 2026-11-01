@@ -14,15 +14,23 @@ typedef struct {
     uint16_t length;
 } TensorInt32;
 
-void dense_layer_forward(
-    const int8_t* inputs,
-    const int8_t* weights,
-    const int32_t* biases,
-    int8_t* outputs,
-    int in_features,
-    int out_features,
-    int32_t req_multiplier,
-    int req_shift
-);
+typedef struct {
+    TensorInt8 weights;
+    TensorInt32 biases;
+    int32_t scale_mult;
+    int32_t scale_shift;
+} LinearLayer;
+
+typedef enum {
+    LAYER_LINEAR
+} LayerType;
+
+typedef struct {
+    LayerType type;
+    const void* params;
+} Layer;
+
+void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* output);
+void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt8* output);
 
 #endif
