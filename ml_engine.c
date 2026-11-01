@@ -8,7 +8,7 @@ void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt
         int32_t acc = 0;
 
         for (uint16_t j = 0; j < in_nodes; j++) {
-            acc = input->data[j] * layer->weights.data[i * in_nodes + j];
+            acc += input->data[j] * layer->weights.data[i * in_nodes + j];
         }
         
         acc += layer->biases.data[i];
