@@ -12,16 +12,19 @@ void print_int(int32_t val) {
         print_char('0');
         return;
     }
+
     if (val < 0) {
         print_char('-');
         val = -val;
     }
+
     char buffer[12];
     int idx = 0;
     while (val > 0) {
         buffer[idx++] = (val % 10) + '0';
         val /= 10;
     }
+    
     for (int i = idx - 1; i >= 0; i--) {
         print_char(buffer[i]);
     }
