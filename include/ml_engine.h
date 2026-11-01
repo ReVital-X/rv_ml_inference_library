@@ -2,6 +2,11 @@
 #define ML_HEADER_H
 
 #include <stdint.h>
+#include <stddef.h>
+
+#ifndef MAX_ACTIVATION_SIZE
+#define MAX_ACTIVATION_SIZE 256
+#endif
 
 typedef struct {
     int8_t* data;
@@ -30,6 +35,7 @@ typedef struct {
     const void* params;
 } Layer;
 
+void network_forward(const TensorInt8* input, const Layer* layers, uint16_t num_layers, TensorInt8* final_output);
 void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* output);
 void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt8* output);
 
