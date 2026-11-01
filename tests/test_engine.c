@@ -1,7 +1,15 @@
 #include <stdint.h>
-#include <assert.h>
 #include <stdio.h>
 #include "ml_engine.h"
+#include "unity.h"
+
+void setUp(void) {
+
+}
+
+void tearDown(void) {
+
+}
 
 void test_linear_layer() {
     int8_t weight_data[2]  = {2, 1};
@@ -46,14 +54,12 @@ void test_linear_layer() {
 
     layer_forward(&inputs, &new_layer, &outputs);
 
-    assert(outputs.data[0] == 10);
+    TEST_ASSERT_EQUAL_INT(outputs.data[0], 10);
     printf("[PASS] test_linear_layer passed successfully!\n");
 }
 
 int main() {
-    printf("Running ML Engine Host Tests...\n");
-    test_linear_layer();
-    printf("All test passed\n");
-
-    return 0;
+    UNITY_BEGIN();
+    RUN_TEST(test_linear_layer);
+    return UNITY_END();
 }
