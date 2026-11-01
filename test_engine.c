@@ -53,7 +53,7 @@ void test_linear_layer() {
 int main() {
     printf("Running ML Engine Host Tests...\n");
     test_linear_layer();
-    printf("All test");
+    printf("All test passed");
 
     return 0;
 }
