@@ -54,8 +54,7 @@ void test_linear_layer() {
 
     layer_forward(&inputs, &new_layer, &outputs);
 
-    TEST_ASSERT_EQUAL_INT(outputs.data[0], 10);
-    printf("[PASS] test_linear_layer passed successfully!\n");
+    TEST_ASSERT_EQUAL_INT8_MESSAGE(10, outputs.data[0], "[FAIL] Linear MAC Assertion failed.");
 }
 
 int main() {
