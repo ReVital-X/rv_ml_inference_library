@@ -46,7 +46,6 @@ void test_linear_layer() {
 
     layer_forward(&inputs, &new_layer, &outputs);
 
-    printf("Computed output: %d\n", outputs.data[0]);
     assert(outputs.data[0] == 10);
     printf("[PASS] test_linear_layer passed successfully!\n");
 }
