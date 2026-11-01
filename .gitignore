@@ -1,1 +1,6 @@
 *.elf
+*.txt
+notes.md
+*.out
+linker.ld
+boot.S
