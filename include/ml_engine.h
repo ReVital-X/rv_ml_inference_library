@@ -8,6 +8,16 @@
 #define MAX_ACTIVATION_SIZE 256
 #endif
 
+typedef enum {
+    LAYER_LINEAR
+} LayerType;
+
+typedef enum {
+    ACTIVATION_NONE = 0,
+    ACTIVATION_RELU,
+    ACTIVATION_RELU6
+} ActivationType;
+
 typedef struct {
     int8_t* data;
     uint16_t rows;
@@ -31,16 +41,6 @@ typedef struct {
     LayerType type;
     const void* params;
 } Layer;
-
-typedef enum {
-    LAYER_LINEAR
-} LayerType;
-
-typedef enum {
-    ACTIVATION_NONE = 0,
-    ACTIVATION_RELU,
-    ACTIVATION_RELU6
-} ActivationType;
 
 void network_forward(const TensorInt8* input, const Layer* layers, uint16_t num_layers, TensorInt8* final_output);
 void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* output);
