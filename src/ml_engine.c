@@ -3,27 +3,54 @@
 static int8_t scratch_buf_0[MAX_ACTIVATION_SIZE];
 static int8_t scratch_buf_1[MAX_ACTIVATION_SIZE];
 
-void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt8* output) {
-    uint16_t out_nodes = layer->weights.rows;
-    uint16_t in_nodes = layer->weights.cols;
+static inline int32_t requantize(int32_t input, int32_t scale_multiply, int32_t scale_shift) {
+    int64_t total = (int64_t)input * (int64_t)scale_multiply;
 
-    for (uint16_t i = 0; i < out_nodes; i++) {
-        int32_t acc = 0;
-
-        for (uint16_t j = 0; j < in_nodes; j++) {
-            acc += input->data[j] * layer->weights.data[i * in_nodes + j];
-        }
-        
-        acc += layer->biases.data[i];
-
-        int32_t scaled_acc = (acc * layer->scale_mult) >> layer->scale_shift;
-
-        if (scaled_acc > 127) scaled_acc = 127;
-        if (scaled_acc < -127) scaled_acc = -127;
-
-        output->data[i] = (int8_t)scaled_acc;
+    if (scale_shift > 0) {
+        total += (1LL << (scale_shift - 1));
     }
 
+    return (int32_t)(total >> scale_shift);
+}
+
+static inline int32_t apply_activation(int32_t val, ActivationType act) {
+    switch (act) {
+        case ACTIVATION_RELU:
+            return (val > 0) ? val : 0;
+    
+        case ACTIVATION_RELU6:
+            if (val < 0) return 0;
+            if (val > 6) return 6;
+            return val;
+        
+        case ACTIVATION_NONE:
+        default:
+            return val;
+    }
+}
+
+void linear_forward(const TensorInt8* input, const LinearLayer* layer, TensorInt8* output) {
+    output->rows = input->rows;
+    output->cols = layer->weights.rows;
+
+    for (uint16_t r = 0; r < output->rows; r++) {
+        for (uint16_t c = 0; c < output->cols; c++) {
+            int32_t acc = layer->biases.data[c];
+
+            for (uint16_t k = 0; k < input->cols; k++) {
+                acc += input->data[r * input->cols + k] * layer->weights.data[c*layer->weights.cols + k];
+            }
+            
+
+            acc = requantize(acc, layer->scale_mult, layer->scale_shift);
+            acc = apply_activation(acc, layer->activation);
+
+            if (acc > 127) acc = 127;
+            if (acc < -127) acc = -127;
+
+            output->data[r*output->cols + c] = (int8_t)acc;
+        }
+    }
 }
 
 void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* output) {
