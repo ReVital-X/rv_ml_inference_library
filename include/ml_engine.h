@@ -24,16 +24,23 @@ typedef struct {
     TensorInt32 biases;
     int32_t scale_mult;
     int32_t scale_shift;
+    ActivationType activation;
 } LinearLayer;
-
-typedef enum {
-    LAYER_LINEAR
-} LayerType;
 
 typedef struct {
     LayerType type;
     const void* params;
 } Layer;
+
+typedef enum {
+    LAYER_LINEAR
+} LayerType;
+
+typedef enum {
+    ACTIVATION_NONE = 0,
+    ACTIVATION_RELU,
+    ACTIVATION_RELU6
+} ActivationType;
 
 void network_forward(const TensorInt8* input, const Layer* layers, uint16_t num_layers, TensorInt8* final_output);
 void layer_forward(const TensorInt8* input, const Layer* layer, TensorInt8* output);
